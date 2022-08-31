@@ -1,14 +1,14 @@
 {
-    "name": "gharlan/propel-event-dispatcher-bundle",
+    "name": "finanzcheck/propel-event-dispatcher-bundle",
     "description": "Integrates the Propel EventDispatcherBehavior into Symfony.",
     "license": "MIT",
     "require": {
         "php": "^7.4 || ^8.0",
-        "gharlan/propel-event-dispatcher-behavior": "^3.0"
+        "finanzcheck/propel-event-dispatcher-behavior": "^4.0"
     },
     "require-dev": {
-        "symfony/framework-bundle": "^5.3|^6.0",
-        "symfony/yaml": "^5.3|^6.0"
+        "symfony/framework-bundle": "^4.4",
+        "symfony/yaml": "^4.4"
     },
     "authors": [
         {
