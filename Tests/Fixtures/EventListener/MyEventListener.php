@@ -2,18 +2,18 @@
 
 namespace Bazinga\Bundle\PropelEventDispatcherBundle\Tests\Fixtures\EventListener;
 
-use Symfony\Component\EventDispatcher\Event;
+use Symfony\Contracts\EventDispatcher\Event;
 
 class MyEventListener
 {
-    private $events = array();
+    private array $events = [];
 
-    public function preSave(Event $event)
+    public function preSave(Event $event): void
     {
         $this->events[] = $event;
     }
 
-    public function getEvents()
+    public function getEvents(): array
     {
         return $this->events;
     }

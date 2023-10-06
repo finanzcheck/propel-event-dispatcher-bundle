@@ -8,13 +8,11 @@ use Psr\Log\LoggerInterface;
 
 class DispatcherInjector
 {
-    const MODEL_INTERFACE = 'EventDispatcherAwareModelInterface';
+    public const MODEL_INTERFACE = 'EventDispatcherAwareModelInterface';
 
-    private $classes;
-
-    private $container;
-
-    private $logger;
+    private ContainerInterface $container;
+    private array $classes;
+    private ?LoggerInterface $logger;
 
     public function __construct(ContainerInterface $container, array $classes, LoggerInterface $logger = null)
     {
@@ -26,10 +24,10 @@ class DispatcherInjector
     /**
      * Initializes the EventDispatcher-aware models.
      *
-     * This methods has to accept unknown classes as it is triggered during
+     * This method has to accept unknown classes as it is triggered during
      * the boot and so will be called before running the propel:build command.
      */
-    public function initializeModels()
+    public function initializeModels(): void
     {
         foreach ($this->classes as $id => $class) {
             $baseClass = sprintf('%s\\Base\\%s',
@@ -39,7 +37,7 @@ class DispatcherInjector
 
             try {
                 $ref = new \ReflectionClass($baseClass);
-            } catch (\ReflectionException $e) {
+            } catch (\ReflectionException) {
                 $this->log(sprintf('The class "%s" does not exist.', $baseClass));
 
                 continue;
@@ -47,7 +45,7 @@ class DispatcherInjector
 
             try {
                 $ref = new \ReflectionClass($class);
-            } catch (\ReflectionException $e) {
+            } catch (\ReflectionException) {
                 $this->log(sprintf(
                     'The class "%s" does not exist. Either your model is not generated yet or you have an error in your listener configuration.',
                     $class
@@ -70,10 +68,8 @@ class DispatcherInjector
         }
     }
 
-    private function log($message)
+    private function log($message): void
     {
-        if (null !== $this->logger) {
-            $this->logger->warning($message);
-        }
+        $this->logger?->warning($message);
     }
 }
