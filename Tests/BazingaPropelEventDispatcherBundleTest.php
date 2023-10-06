@@ -4,38 +4,66 @@ namespace Bazinga\Bundle\PropelEventDispatcherBundle\Tests;
 
 use Bazinga\Bundle\PropelEventDispatcherBundle\Tests\Fixtures\Model\MyObject;
 use Bazinga\Bundle\PropelEventDispatcherBundle\Tests\Fixtures\Model\MyObject3;
+use Bazinga\Bundle\PropelEventDispatcherBundle\Tests\Fixtures\EventListener\MyEventSubscriber;
+use Bazinga\Bundle\PropelEventDispatcherBundle\Tests\Fixtures\Model\MyObject2;
+use Bazinga\Bundle\PropelEventDispatcherBundle\Tests\Fixtures\EventListener\MyEventListener;
+use Bazinga\Bundle\PropelEventDispatcherBundle\Tests\Fixtures\TestKernel;
+use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
+use Symfony\Component\Filesystem\Filesystem;
+use Symfony\Component\HttpKernel\Kernel;
 
 class BazingaPropelEventDispatcherBundleTest extends WebTestCase
 {
-    public function testGetListener()
+    protected function setUp(): void
     {
-        $listener = $this->getContainer()->get('listener.my_event_listener');
+        parent::setUp();
+        $this->deleteTmpDir();
+        self::bootKernel();
+    }
+
+    protected static function getKernelClass(): string
+    {
+        return TestKernel::class;
+    }
+
+    private function deleteTmpDir(): void
+    {
+        $dir = sys_get_temp_dir().'/'.Kernel::VERSION;
+        if (file_exists($dir)) {
+            $fs = new Filesystem();
+            $fs->remove($dir);
+        }
+    }
+
+    public function testGetListener(): void
+    {
+        $listener = self::getContainer()->get('listener.my_event_listener');
 
         $this->assertNotNull($listener);
-        $this->assertInstanceOf('Bazinga\Bundle\PropelEventDispatcherBundle\Tests\Fixtures\EventListener\MyEventListener', $listener);
+        $this->assertInstanceOf(MyEventListener::class, $listener);
     }
 
-    public function testGetListenerWithNonExistentClass()
+    public function testGetListenerWithNonExistentClass(): void
     {
-        $this->assertFalse(class_exists('Bazinga\Bundle\PropelEventDispatcherBundle\Tests\Fixtures\Model\MyObject2', false));
+        $this->assertFalse(class_exists(MyObject2::class, false));
 
-        $listener = $this->getContainer()->get('listener.my_event_listener_2');
+        $listener = self::getContainer()->get('listener.my_event_listener_2');
 
         $this->assertNotNull($listener);
-        $this->assertInstanceOf('Bazinga\Bundle\PropelEventDispatcherBundle\Tests\Fixtures\EventListener\MyEventListener', $listener);
+        $this->assertInstanceOf(MyEventListener::class, $listener);
     }
 
-    public function testGetListenerWithNonExistentParentClass()
+    public function testGetListenerWithNonExistentParentClass(): void
     {
-        $this->assertFalse(class_exists('Bazinga\Bundle\PropelEventDispatcherBundle\Tests\Fixtures\Model\MyObject2', false));
+        $this->assertFalse(class_exists(MyObject2::class, false));
 
-        $listener = $this->getContainer()->get('listener.my_event_listener_3');
+        self::getContainer()->get('listener.my_event_listener_3');
     }
 
-    public function testFireEvent()
+    public function testFireEvent(): void
     {
         $object   = new MyObject();
-        $listener = $this->getContainer()->get('listener.my_event_listener');
+        $listener = self::getContainer()->get('listener.my_event_listener');
 
         $this->assertCount(0, $listener->getEvents());
 
@@ -47,9 +75,9 @@ class BazingaPropelEventDispatcherBundleTest extends WebTestCase
         $this->assertSame($object, $subject);
     }
 
-    public function testFireEventWithEarlyBoot()
+    public function testFireEventWithEarlyBoot(): void
     {
-        $listener = $this->getContainer()->get('listener.my_event_listener_4');
+        $listener = self::getContainer()->get('listener.my_event_listener_4');
         $object   = new MyObject3();
 
         $this->assertCount(0, $listener->getEvents());
@@ -62,18 +90,18 @@ class BazingaPropelEventDispatcherBundleTest extends WebTestCase
         $this->assertSame($object, $subject);
     }
 
-    public function testSubscriber()
+    public function testSubscriber(): void
     {
-        $subscriber = $this->getContainer()->get('subscriber.my_subscriber_1');
+        $subscriber = self::getContainer()->get('subscriber.my_subscriber_1');
 
         $this->assertNotNull($subscriber);
-        $this->assertInstanceOf('Bazinga\Bundle\PropelEventDispatcherBundle\Tests\Fixtures\EventListener\MyEventSubscriber', $subscriber);
+        $this->assertInstanceOf(MyEventSubscriber::class, $subscriber);
     }
 
-    public function testFireEventWithSubscriber()
+    public function testFireEventWithSubscriber(): void
     {
         $object     = new MyObject3();
-        $subscriber = $this->getContainer()->get('subscriber.my_subscriber_1');
+        $subscriber = self::getContainer()->get('subscriber.my_subscriber_1');
 
         $this->assertCount(0, $subscriber->getEvents());
 

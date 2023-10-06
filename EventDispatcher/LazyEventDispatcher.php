@@ -6,31 +6,13 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
-/**
- * @author William Durand <william.durand1@gmail.com>
- */
 class LazyEventDispatcher implements EventDispatcherInterface
 {
-    /**
-     * @var \Symfony\Component\DependencyInjection\ContainerInterface
-     */
-    private $container;
+    private ContainerInterface $container;
+    private string $serviceId;
+    private ?EventDispatcherInterface $eventDispatcher = null;
 
-    /**
-     * @var string
-     */
-    private $serviceId;
-
-    /**
-     * @var \Symfony\Component\EventDispatcher\EventDispatcherInterface
-     */
-    private $eventDispatcher = null;
-
-    /**
-     * @param ContainerInterface $container
-     * @param string             $serviceId
-     */
-    public function __construct($container, $serviceId)
+    public function __construct(ContainerInterface $container, string $serviceId)
     {
         $this->container = $container;
         $this->serviceId = $serviceId;
@@ -39,7 +21,7 @@ class LazyEventDispatcher implements EventDispatcherInterface
     /**
      * {@inheritdoc}
      */
-    public function dispatch($event, $eventName = null)
+    public function dispatch($event, $eventName = null): object
     {
         return $this->getEventDispatcher()->dispatch($event, $eventName);
     }
@@ -47,7 +29,7 @@ class LazyEventDispatcher implements EventDispatcherInterface
     /**
      * {@inheritdoc}
      */
-    public function addListener($eventName, $listener, $priority = 0)
+    public function addListener($eventName, $listener, $priority = 0): void
     {
         $this->getEventDispatcher()->addListener($eventName, $listener, $priority);
     }
@@ -55,7 +37,7 @@ class LazyEventDispatcher implements EventDispatcherInterface
     /**
      * {@inheritdoc}
      */
-    public function addSubscriber(EventSubscriberInterface $subscriber)
+    public function addSubscriber(EventSubscriberInterface $subscriber): void
     {
         $this->getEventDispatcher()->addSubscriber($subscriber);
     }
@@ -63,7 +45,7 @@ class LazyEventDispatcher implements EventDispatcherInterface
     /**
      * {@inheritdoc}
      */
-    public function removeListener($eventName, $listener)
+    public function removeListener($eventName, $listener): void
     {
         $this->getEventDispatcher()->removeListener($eventName, $listener);
     }
@@ -71,7 +53,7 @@ class LazyEventDispatcher implements EventDispatcherInterface
     /**
      * {@inheritdoc}
      */
-    public function removeSubscriber(EventSubscriberInterface $subscriber)
+    public function removeSubscriber(EventSubscriberInterface $subscriber): void
     {
         $this->getEventDispatcher()->removeSubscriber($subscriber);
     }
@@ -79,7 +61,7 @@ class LazyEventDispatcher implements EventDispatcherInterface
     /**
      * {@inheritdoc}
      */
-    public function getListeners($eventName = null)
+    public function getListeners($eventName = null): array
     {
         return $this->getEventDispatcher()->getListeners($eventName);
     }
@@ -87,7 +69,7 @@ class LazyEventDispatcher implements EventDispatcherInterface
     /**
      * {@inheritdoc}
      */
-    public function getListenerPriority($eventName, $listener)
+    public function getListenerPriority($eventName, $listener): ?int
     {
         return $this->getEventDispatcher()->getListenerPriority($eventName, $listener);
     }
@@ -95,15 +77,12 @@ class LazyEventDispatcher implements EventDispatcherInterface
     /**
      * {@inheritdoc}
      */
-    public function hasListeners($eventName = null)
+    public function hasListeners($eventName = null): bool
     {
         return $this->getEventDispatcher()->hasListeners($eventName);
     }
 
-    /**
-     * @return EventDispatcherInterface
-     */
-    protected function getEventDispatcher()
+    protected function getEventDispatcher(): EventDispatcherInterface
     {
         if (null === $this->eventDispatcher) {
             $this->eventDispatcher = $this->container->get($this->serviceId);

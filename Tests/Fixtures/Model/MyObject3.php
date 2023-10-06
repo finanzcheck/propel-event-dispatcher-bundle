@@ -2,7 +2,7 @@
 
 namespace Bazinga\Bundle\PropelEventDispatcherBundle\Tests\Fixtures\Model;
 
-use Bazinga\Bundle\PropelEventDispatcherBundle\Tests\Fixtures\Model\om\BaseMyObject3;
+use Bazinga\Bundle\PropelEventDispatcherBundle\Tests\Fixtures\Model\Base\MyObject3 as BaseMyObject3;
 use Symfony\Component\EventDispatcher\GenericEvent;
 
 class MyObject3 extends BaseMyObject3

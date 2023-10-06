@@ -12,7 +12,7 @@ use Symfony\Component\HttpKernel\Bundle\Bundle;
 class BazingaPropelEventDispatcherBundle extends Bundle
 {
     /**
-     * {@inheritdoc}
+     * {@inheritdoc}
      */
     public function build(ContainerBuilder $container)
     {

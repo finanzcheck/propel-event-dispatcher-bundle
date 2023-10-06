@@ -2,13 +2,23 @@
     "name": "finanzcheck/propel-event-dispatcher-bundle",
     "description": "Integrates the Propel EventDispatcherBehavior into Symfony.",
     "license": "MIT",
+    "repositories": [
+        {
+            "type": "composer",
+            "url": "https://repo.packagist.com/finanzcheck/"
+        },
+        {
+            "packagist.org": false
+        }
+    ],
     "require": {
-        "php": "^7.4 || ^8.0",
+        "php": "^8.0",
         "finanzcheck/propel-event-dispatcher-behavior": "^4.0"
     },
     "require-dev": {
-        "symfony/framework-bundle": "^4.4",
-        "symfony/yaml": "^4.4"
+        "phpunit/phpunit": "^10.4",
+        "symfony/framework-bundle": "^5.4|^6.0",
+        "symfony/yaml": "^5.4|^6.0"
     },
     "authors": [
         {
@@ -18,6 +28,11 @@
     ],
     "autoload": {
         "psr-4": { "Bazinga\\Bundle\\PropelEventDispatcherBundle\\": "" }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Bazinga\\Bundle\\PropelEventDispatcherBundle\\Tests\\": "Tests/"
+        }
     },
     "extra": {
         "branch-alias": {
